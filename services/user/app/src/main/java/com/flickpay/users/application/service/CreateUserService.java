@@ -1,10 +1,13 @@
 package com.flickpay.users.application.service;
 
+import org.springframework.stereotype.Service;
+
 import com.flickpay.users.application.dto.CreateUserCommand;
 import com.flickpay.users.domain.entity.User;
 import com.flickpay.users.domain.exception.EmailAlreadyExistsException;
 import com.flickpay.users.domain.repository.UserRepository;
 
+@Service
 public class CreateUserService {
     private final UserRepository userRepository;
 

@@ -4,7 +4,7 @@ import com.flickpay.users.domain.entity.User;
 import com.flickpay.users.presentation.dto.UserResponse;
 
 public class UserResponseMapper {
-    public UserResponse toResponse(User user) {
+    public static UserResponse toResponse(User user) {
         return new UserResponse(
             user.getId(),
             user.getName(),

@@ -4,6 +4,8 @@ import com.flickpay.users.domain.entity.User;
 import com.flickpay.users.infrastructure.persistence.entity.UserJpaEntity;
 
 public class UserPersistenceMapper {
+    private UserPersistenceMapper() {}
+
     public static UserJpaEntity toJpaEntity(User user) {
         return new UserJpaEntity(
             user.getId(),
