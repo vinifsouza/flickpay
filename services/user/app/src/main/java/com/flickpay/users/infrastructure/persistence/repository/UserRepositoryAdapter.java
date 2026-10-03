@@ -1,5 +1,6 @@
 package com.flickpay.users.infrastructure.persistence.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,5 +33,20 @@ public class UserRepositoryAdapter implements UserRepository {
     @Override
     public boolean existsByEmail(String email) {
         return userJpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public List<User> findByEmail(String email) {
+        return userJpaRepository.findByEmail(email)
+            .stream()
+            .map(UserPersistenceMapper::toDomainEntity)
+            .toList();
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userJpaRepository.findAll().stream()
+            .map(UserPersistenceMapper::toDomainEntity)
+            .toList();
     }
 }

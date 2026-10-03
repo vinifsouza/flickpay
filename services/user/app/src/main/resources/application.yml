@@ -1,8 +1,4 @@
 spring:
-  profiles:
-    active:
-      - local
-
   application:
     name: users
 
@@ -18,7 +14,15 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+  devtools:
+    livereload:
+      enabled: true
+
 management:
+  endpoints:
+    jmx:
+      exposure:
+        include: "*"
   endpoint:
     health:
       show-details: always

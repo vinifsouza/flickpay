@@ -2,6 +2,7 @@ package com.flickpay.users.presentation.enums;
 
 public enum ErrorCode {
     EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS"),
+    USER_NOT_FOUND("USER_NOT_FOUND"),
     USER_ALREADY_INACTIVE("USER_ALREADY_INACTIVE");
 
     private final String code;

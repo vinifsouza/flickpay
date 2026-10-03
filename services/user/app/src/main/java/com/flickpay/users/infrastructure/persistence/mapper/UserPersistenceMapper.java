@@ -1,5 +1,7 @@
 package com.flickpay.users.infrastructure.persistence.mapper;
 
+import java.util.List;
+
 import com.flickpay.users.domain.entity.User;
 import com.flickpay.users.infrastructure.persistence.entity.UserJpaEntity;
 
@@ -26,5 +28,11 @@ public class UserPersistenceMapper {
             userJpaEntity.getCreatedAt(),
             userJpaEntity.getUpdatedAt()
         );
+    }
+
+    public static List<User> toDomainEntityList(List<UserJpaEntity> userJpaEntities) {
+        return userJpaEntities.stream()
+            .map(UserPersistenceMapper::toDomainEntity)
+            .toList();
     }
 }
