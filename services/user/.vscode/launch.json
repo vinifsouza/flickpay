@@ -8,7 +8,8 @@
             "mainClass": "com.flickpay.users.UsersApplication",
             "projectName": "users",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": "-Dspring.profiles.active=local"
         }
     ]
 }
