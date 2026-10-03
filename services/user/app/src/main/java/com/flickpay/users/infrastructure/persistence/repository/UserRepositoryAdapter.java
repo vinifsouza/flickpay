@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.flickpay.users.domain.entity.User;
+import com.flickpay.users.domain.exception.EmailAlreadyExistsException;
 import com.flickpay.users.domain.repository.UserRepository;
 import com.flickpay.users.infrastructure.persistence.mapper.UserPersistenceMapper;
 
@@ -20,9 +22,13 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public User save(User user) {
-        return UserPersistenceMapper.toDomainEntity(
-            userJpaRepository.save(UserPersistenceMapper.toJpaEntity(user))
-        );
+        try {
+            return UserPersistenceMapper.toDomainEntity(
+                userJpaRepository.saveAndFlush(UserPersistenceMapper.toJpaEntity(user))
+            );
+        } catch (DataIntegrityViolationException exception) {
+            throw new EmailAlreadyExistsException(user.getEmail());
+        }
     }
 
     @Override

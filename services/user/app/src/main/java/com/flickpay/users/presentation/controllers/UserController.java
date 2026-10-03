@@ -3,6 +3,7 @@ package com.flickpay.users.presentation.controllers;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponse> create(
-        @RequestBody CreateUserRequest request
+        @Valid @RequestBody CreateUserRequest request
     ) {
         var command = new CreateUserCommand(
             request.name(),
