@@ -17,12 +17,12 @@ public class GetUserService {
         this.userRepository = userRepository;
     }
 
-    public User getUserById(UUID userId) {
+    public User getById(UUID userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException(userId));
     }
 
-    public List<User> getUserByEmail(String email) {
+    public List<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 

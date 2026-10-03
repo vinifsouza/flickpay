@@ -60,7 +60,7 @@ public class UserController {
     
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
-        var user = getUserService.getUserById(id);
+        var user = getUserService.getById(id);
 
         return ResponseEntity.ok(UserResponseMapper.toResponse(user));
     }
@@ -69,7 +69,7 @@ public class UserController {
     public ResponseEntity<List<UserResponse>> getUsersByEmail(
         @RequestParam(required = false) String email
     ) {
-        var users = getUserService.getUserByEmail(email);
+        var users = getUserService.findByEmail(email);
 
         return ResponseEntity.ok().body(UserResponseMapper.toResponseList(users));
     }
