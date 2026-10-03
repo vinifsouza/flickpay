@@ -1,49 +1,49 @@
-# Digital Wallet Platform
+# FlickPay
 
-Projeto de estudo para construir uma plataforma de carteira digital e pagamentos, explorando conceitos de backend, sistemas distribuídos, escalabilidade, consistência, mensageria, resiliência e observabilidade.
+Educational project to build a digital wallet and payment platform while exploring backend engineering, distributed systems, scalability, consistency, messaging, resilience, and observability.
 
-O projeto simula uma plataforma de pagamentos onde usuários podem possuir carteiras, adicionar saldo, realizar transferências e acompanhar suas transações.
+The project simulates a payment platform where users can have wallets, add funds, make transfers and payments, and track their financial transactions.
 
-> Projeto exclusivamente educacional. Não haverá movimentação de dinheiro real.
+> **Educational project only. No real money will be processed.**
 
 ---
 
-## Objetivos
+# Goals
 
-O principal objetivo é utilizar o projeto como um laboratório para estudar:
+The main goal is to use FlickPay as a laboratory to study:
 
 - API Gateway
-- Load Balancer
+- Load Balancing
 - Kubernetes
-- Escalabilidade horizontal
+- Horizontal Scaling
 - Auto Scaling
-- Redis / Cache
+- Redis / Caching
 - Apache Kafka
-- Mensageria
-- Event-driven architecture
-- Idempotência
-- Concorrência
-- Consistência de dados
-- Transações distribuídas
-- Resiliência
+- Messaging
+- Event-Driven Architecture
+- Idempotency
+- Concurrency
+- Data Consistency
+- Distributed Transactions
+- Resilience
 - Retry / Backoff
 - Circuit Breaker
-- Dead Letter Queue
-- Testes
-- Testes de carga
-- Métricas
-- Observabilidade
+- Dead Letter Queues
+- Testing
+- Load Testing
+- Metrics
+- Observability
 - Distributed Tracing
 - Infrastructure as Code
 - Serverless
 
 ---
 
-## Stack
+# Stack
 
-| Categoria | Tecnologia |
+| Category | Technology |
 |---|---|
-| Monolith / Core Services | Java |
+| Core Services | Java |
 | Framework | Spring Boot |
 | Serverless | Go |
 | Database | PostgreSQL |
@@ -65,114 +65,175 @@ O principal objetivo é utilizar o projeto como um laboratório para estudar:
 
 ---
 
-# Ideia do sistema
+# System Overview
 
-A plataforma permitirá que usuários possuam uma carteira digital.
+FlickPay will provide digital wallets for users.
 
-Cada usuário poderá:
+A user can:
 
 ```text
-Criar conta
+Create account
     ↓
-Criar carteira
+Create wallet
     ↓
-Adicionar saldo
+Add funds
     ↓
-Transferir dinheiro
+Transfer money
     ↓
-Receber dinheiro
+Make payments
     ↓
-Consultar saldo
+Receive money
     ↓
-Consultar extrato
+Check balance
+    ↓
+Check transaction history
 ```
 
-Exemplo:
+Example:
 
 ```text
 Wallet A
-Saldo: R$ 1.000,00
+Balance: R$ 1,000
 
-        Transferência
-        R$ 250,00
-              │
-              ▼
+        Transfer
+        R$ 250
+           │
+           ▼
 
 Wallet B
-Saldo: R$ 500,00
+Balance: R$ 500
 ```
 
-Resultado:
+Result:
 
 ```text
-Wallet A → R$ 750,00
-Wallet B → R$ 750,00
+Wallet A → R$ 750
+Wallet B → R$ 750
 ```
 
 ---
 
-# Arquitetura
+# Architecture
 
-A arquitetura será construída gradualmente.
+The project will evolve gradually from a monolith into a distributed microservices architecture.
 
-A arquitetura final deverá se aproximar de:
+The final architecture will be based on **domain ownership**, with each service owning its own database.
 
 ```text
-                         Client
-                           │
-                           ▼
-                    API Gateway
-                           │
-                           ▼
-                    Load Balancer
-                           │
-              ┌────────────┼────────────┐
-              ▼            ▼            ▼
-         Wallet Service Payment Service User Service
-              │            │            │
-              └────────────┼────────────┘
-                           │
-                    ┌──────┴──────┐
-                    ▼             ▼
-                PostgreSQL      Redis
-                    │
-                    ▼
-                   Kafka
-                    │
-          ┌─────────┼─────────┐
-          ▼         ▼         ▼
-       Ledger    Payment     Fraud
-       Consumer  Consumer    Consumer
-          │         │         │
-          └─────────┼─────────┘
-                    │
-                    ▼
-             Observability
-          ┌─────────────────┐
-          │ Prometheus      │
-          │ Grafana         │
-          │ OpenTelemetry   │
-          └─────────────────┘
+                           Client
+                              │
+                              ▼
+                        API Gateway
+                              │
+                              ▼
+                        Load Balancer
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+   User Service         Wallet Service       Payment Service
+        │                     │                     │
+     user-db              wallet-db            payment-db
+                                                    │
+        │                     │                     │
+        │                     └──────────┬──────────┘
+        │                                │
+        │                              Kafka
+        │                                │
+        │                 ┌──────────────┼──────────────┐
+        │                 ▼              ▼              ▼
+        │          Transfer Service  Ledger Service   Consumers
+        │                 │              │
+        │           transfer-db       ledger-db
+        │
+        └───────────────────────────────────────────────
+
+                         Observability
+                  ┌─────────────────────────┐
+                  │ Prometheus              │
+                  │ Grafana                 │
+                  │ OpenTelemetry           │
+                  └─────────────────────────┘
 ```
+
+## Microservices
+
+| Service | Responsibility | Database |
+|---|---|---|
+| **User Service** | Users and account status | `user-db` |
+| **Wallet Service** | Wallets, balances, credits and debits | `wallet-db` |
+| **Transfer Service** | Wallet-to-wallet transfers | `transfer-db` |
+| **Payment Service** | Product/service payments | `payment-db` |
+| **Ledger Service** | Financial records and audit trail | `ledger-db` |
+
+### Database ownership
+
+Each service exclusively owns its data.
+
+```text
+user-db
+└── users
+
+wallet-db
+└── wallets
+
+transfer-db
+├── transfers
+├── transfer_idempotency_keys
+└── transfer_outbox_events
+
+payment-db
+├── payments
+├── payment_idempotency_keys
+└── payment_outbox_events
+
+ledger-db
+├── financial_transactions
+└── ledger_entries
+```
+
+There are **no foreign keys between microservice databases**.
+
+Cross-service relationships are represented by UUIDs and resolved through APIs or events.
+
+For example:
+
+```text
+wallet.user_id
+    ↓
+User Service
+
+transfer.source_wallet_id
+    ↓
+Wallet Service
+
+ledger.reference_id
+    ↓
+Transfer / Payment Service
+```
+
+The **Wallet Service is the only service responsible for modifying wallet balances**.
+
+The **Ledger Service maintains an immutable financial history**.
 
 ---
 
-# Linguagens
+# Languages
 
 ## Java
 
-Java será utilizado como linguagem principal do projeto.
+Java will be the primary language for the core services.
 
-O monólito inicialmente concentrará:
+The initial monolith will contain:
 
 - Users
 - Wallets
 - Transfers
 - Payments
 - Ledger
-- Transactions
 
-Stack principal:
+The domain will later be split into the microservices described above.
+
+Main stack:
 
 ```text
 Java
@@ -184,7 +245,7 @@ JUnit
 Mockito
 ```
 
-O monólito será utilizado para construir o domínio e estudar conceitos como:
+The Java services will be used to study:
 
 - Domain modeling
 - Transactions
@@ -199,9 +260,9 @@ O monólito será utilizado para construir o domínio e estudar conceitos como:
 
 ## Go
 
-Go será utilizado posteriormente para funções serverless e componentes desacoplados.
+Go will be introduced later for serverless and decoupled workloads.
 
-Exemplos:
+Example:
 
 ```text
 Kafka Event
@@ -211,18 +272,16 @@ AWS Lambda
 Go
 ```
 
-Possíveis funções:
+Possible workloads:
 
-- Notification processor
+- Notification processing
 - Fraud analysis
-- Transaction processor
+- Transaction processing
 - Reconciliation
-- DLQ processor
+- DLQ processing
 - Scheduled jobs
 
-Objetivo:
-
-Comparar uma aplicação tradicional executando em containers com workloads **event-driven e serverless**.
+The goal is to compare traditional containerized workloads with event-driven and serverless workloads.
 
 ---
 
@@ -230,7 +289,7 @@ Comparar uma aplicação tradicional executando em containers com workloads **ev
 
 ## 01. Monolith
 
-Criar uma aplicação inicialmente simples.
+Start with a simple application.
 
 ```text
 Client
@@ -240,7 +299,7 @@ Spring Boot
 PostgreSQL
 ```
 
-Implementar:
+Implement:
 
 ```http
 POST /users
@@ -252,11 +311,12 @@ GET /wallets/:id/balance
 POST /wallets/:id/deposit
 
 POST /transfers
+POST /payments
 
 GET /transactions
 ```
 
-### Estudar
+Study:
 
 - Spring Boot
 - REST
@@ -270,16 +330,16 @@ GET /transactions
 
 # 02. Ledger
 
-Implementar o sistema de Ledger.
+Implement the financial ledger.
 
-Cada transferência deverá gerar registros de:
+Each financial operation should generate balanced entries:
 
 ```text
 DEBIT
 CREDIT
 ```
 
-Exemplo:
+Example:
 
 ```text
 Transfer #123
@@ -289,19 +349,21 @@ Wallet B    CREDIT   R$100
 ─────────────────────────────
 ```
 
-O Ledger deverá ser imutável.
+The ledger should be immutable.
 
-Garantir:
+Guarantee:
 
 ```text
 Total Debits = Total Credits
 ```
 
+The ledger becomes the financial audit trail, while the wallet balance is maintained as an optimized representation of the current balance.
+
 ---
 
-# 03. Idempotência e Concorrência
+# 03. Idempotency and Concurrency
 
-Implementar:
+Implement:
 
 - Idempotency Keys
 - Database Transactions
@@ -309,26 +371,37 @@ Implementar:
 - Pessimistic Locking
 - Optimistic Locking
 
-Exemplo:
+Idempotency is owned by the service handling the operation:
+
+```text
+Transfer Service
+└── transfer_idempotency_keys
+
+Payment Service
+└── payment_idempotency_keys
+```
+
+Example:
 
 ```http
 POST /transfers
 Idempotency-Key: 8f72a91c
 ```
 
-A mesma requisição enviada novamente não deve criar uma segunda transferência.
+Retrying the same request must not create a duplicate operation.
 
 ---
 
-# 04. Testes
+# 04. Tests
 
-Criar diferentes níveis de testes.
+Create multiple levels of tests.
 
 ### Unit Tests
 
 ```text
 WalletService
 TransferService
+PaymentService
 LedgerService
 ```
 
@@ -356,21 +429,21 @@ Check Balance
 
 ### Concurrency Tests
 
-Executar múltiplas transferências simultaneamente e verificar a consistência.
+Execute multiple operations simultaneously and verify that balances and financial records remain consistent.
 
 ---
 
 # 05. Redis
 
-Adicionar Redis para operações de leitura.
+Add Redis for read optimization and distributed infrastructure concerns.
 
-Exemplo:
+Example:
 
 ```text
 GET /wallets/:id/balance
 ```
 
-Fluxo:
+Flow:
 
 ```text
 Request
@@ -380,13 +453,13 @@ Request
    ├── HIT → Response
    │
    └── MISS
-         ↓
+        ↓
      PostgreSQL
-         ↓
-       Redis
+        ↓
+      Redis
 ```
 
-Estudar:
+Study:
 
 - Cache Aside
 - TTL
@@ -395,38 +468,101 @@ Estudar:
 - Hot Keys
 - Eviction
 - Cache Hit Rate
+- Distributed Locks
+- Rate Limiting
 
-O PostgreSQL continuará sendo a fonte de verdade para informações financeiras.
+PostgreSQL remains the source of truth for financial data.
 
 ---
 
-# 06. Kafka e Mensageria
+# 06. Microservices
 
-Transformar partes do processamento em uma arquitetura orientada a eventos.
-
-```text
-Transfer API
-     ↓
-   Kafka
-     ↓
-┌────┼──────────┐
-▼    ▼          ▼
-Ledger Payment  Fraud
-```
-
-Criar topics como:
+Split the monolith into domain-oriented services:
 
 ```text
-wallet.created
-transfer.created
-transfer.completed
-transfer.failed
-payment.created
-payment.completed
-payment.failed
+User Service
+    ↓
+user-db
+
+Wallet Service
+    ↓
+wallet-db
+
+Transfer Service
+    ↓
+transfer-db
+
+Payment Service
+    ↓
+payment-db
+
+Ledger Service
+    ↓
+ledger-db
 ```
 
-Estudar:
+Each service owns its database.
+
+There should be no direct database access between services.
+
+Communication happens through:
+
+```text
+REST / APIs
+Kafka Events
+```
+
+---
+
+# 07. Kafka and Messaging
+
+Introduce event-driven processing.
+
+Example:
+
+```text
+Transfer Service
+       │
+       ▼
+     Kafka
+       │
+       ├──────────────┐
+       ▼              ▼
+Wallet Service   Ledger Service
+       │              │
+       ▼              ▼
+   wallet-db       ledger-db
+```
+
+Possible topics:
+
+```text
+user.events
+wallet.events
+transfer.events
+payment.events
+ledger.events
+```
+
+Example events:
+
+```text
+UserCreated
+
+WalletCreated
+WalletDebited
+WalletCredited
+
+TransferRequested
+TransferCompleted
+TransferFailed
+
+PaymentRequested
+PaymentCompleted
+PaymentFailed
+```
+
+Study:
 
 - Producers
 - Consumers
@@ -437,48 +573,49 @@ Estudar:
 - Ordering
 - At-least-once delivery
 - Idempotent Consumers
+- Consumer Lag
 
 ---
 
-# 07. Outbox Pattern
+# 08. Outbox Pattern
 
-Garantir que alterações no banco e publicação de eventos não fiquem inconsistentes.
+Each service that produces events maintains its own outbox.
 
-Problema:
+Example:
 
 ```text
-Database
-   ↓
-Transfer saved
-
-Kafka
-   ↓
-ERROR
+transfer-db
+├── transfers
+├── transfer_idempotency_keys
+└── transfer_outbox_events
 ```
 
-Com Outbox:
+A transfer and its event are created in the same database transaction:
 
 ```text
 Database Transaction
         │
-        ├── Update Wallet
-        ├── Create Ledger Entry
+        ├── Create Transfer
         └── Create Outbox Event
-                     │
-                     ▼
-                Outbox Worker
-                     │
-                     ▼
-                   Kafka
+                    │
+                    ▼
+              Outbox Publisher
+                    │
+                    ▼
+                  Kafka
 ```
+
+This prevents the database state and published events from becoming inconsistent.
+
+The same pattern is applied to the Payment Service.
 
 ---
 
-# 08. Serverless com Go
+# 09. Serverless with Go
 
-Introduzir AWS Lambda utilizando Go.
+Introduce AWS Lambda using Go.
 
-Exemplo:
+Example:
 
 ```text
 Kafka Event
@@ -490,7 +627,7 @@ Go
 Process Event
 ```
 
-Possíveis workloads:
+Possible workloads:
 
 ```text
 Payment Event
@@ -506,24 +643,24 @@ Scheduled Event
 Reconciliation Lambda
 ```
 
-Estudar:
+Study:
 
 - AWS Lambda
 - Go
-- Cold Start
-- Stateless execution
-- Event-driven architecture
+- Cold Starts
+- Stateless Execution
+- Event-Driven Architecture
 - Concurrency
 - Retry
-- Dead Letter Queue
-- AWS EventBridge
+- Dead Letter Queues
+- EventBridge
 - SQS
 
 ---
 
-# 09. Resiliência
+# 10. Resilience
 
-Simular falhas:
+Simulate failures:
 
 ```text
 Payment Service DOWN
@@ -535,7 +672,7 @@ Network timeout
 Lambda failure
 ```
 
-Implementar:
+Implement:
 
 - Timeout
 - Retry
@@ -548,9 +685,9 @@ Implementar:
 
 ---
 
-# 10. Dead Letter Queue
+# 11. Dead Letter Queue
 
-Mensagens que não puderem ser processadas após várias tentativas deverão ir para uma DLQ.
+Messages that cannot be processed after multiple attempts should be sent to a DLQ.
 
 ```text
 Kafka
@@ -566,7 +703,7 @@ Retry
 DLQ
 ```
 
-Criar mecanismo para:
+Implement a replay mechanism:
 
 ```text
 DLQ
@@ -580,11 +717,11 @@ Consumer
 
 ---
 
-# 11. API Gateway
+# 12. API Gateway
 
-Adicionar AWS API Gateway.
+Add AWS API Gateway.
 
-Responsabilidades:
+Responsibilities:
 
 - Authentication
 - Authorization
@@ -593,27 +730,31 @@ Responsabilidades:
 - Request ID
 - Request Validation
 
-Exemplo:
+Example:
 
 ```text
 /api/users
-      ↓
+     ↓
 User Service
 
 /api/wallets
-      ↓
+     ↓
 Wallet Service
 
+/api/transfers
+     ↓
+Transfer Service
+
 /api/payments
-      ↓
+     ↓
 Payment Service
 ```
 
 ---
 
-# 12. Load Balancer
+# 13. Load Balancer
 
-Executar múltiplas instâncias dos serviços.
+Run multiple instances of the services.
 
 ```text
               Load Balancer
@@ -622,21 +763,21 @@ Executar múltiplas instâncias dos serviços.
           API #1  API #2  API #3
 ```
 
-Estudar:
+Study:
 
 - L4 vs L7
-- Round Robin
+- Load Balancing
 - Health Checks
 - Connection Draining
 - Horizontal Scaling
 
 ---
 
-# 13. Kubernetes
+# 14. Kubernetes
 
-Containerizar os serviços e executar no Kubernetes.
+Containerize the services and run them on Kubernetes.
 
-Implementar:
+Implement:
 
 - Pods
 - Deployments
@@ -648,7 +789,7 @@ Implementar:
 - Readiness Probes
 - Resource Requests/Limits
 
-Arquitetura:
+Architecture:
 
 ```text
 Kubernetes Cluster
@@ -659,18 +800,18 @@ Kubernetes Cluster
        ▼
     Service
        │
- ┌─────┼─────┐
- ▼     ▼     ▼
-Pod   Pod   Pod
+   ┌───┼───┐
+   ▼   ▼   ▼
+ Pod  Pod  Pod
 ```
 
 ---
 
-# 14. Auto Scaling
+# 15. Auto Scaling
 
-Implementar Horizontal Pod Autoscaler.
+Implement Horizontal Pod Autoscaler.
 
-Exemplo:
+Example:
 
 ```text
 Low traffic
@@ -682,7 +823,7 @@ High traffic
 10 Pods
 ```
 
-Realizar testes de carga e observar:
+Measure:
 
 - CPU
 - Memory
@@ -693,9 +834,9 @@ Realizar testes de carga e observar:
 
 ---
 
-# 15. Observabilidade
+# 16. Observability
 
-Adicionar:
+Add:
 
 ```text
 Prometheus
@@ -703,7 +844,7 @@ Grafana
 OpenTelemetry
 ```
 
-Métricas:
+Metrics:
 
 ```text
 Requests/sec
@@ -722,9 +863,11 @@ Failed Transfers
 
 ---
 
-# 16. Distributed Tracing
+# 17. Distributed Tracing
 
-Utilizar OpenTelemetry para acompanhar uma operação completa:
+Use OpenTelemetry to trace a complete financial operation across services.
+
+Example:
 
 ```text
 Transfer Request
@@ -733,54 +876,59 @@ Transfer Request
  API Gateway
        │
        ▼
- Wallet Service
+Transfer Service
        │
-       ├── PostgreSQL
+       ├── transfer-db
        │
        └── Kafka
-              │
-              ▼
-        Payment Consumer
-              │
-              ▼
-           Ledger
+             │
+             ▼
+       Wallet Service
+             │
+             ├── wallet-db
+             │
+             └── Kafka
+                    │
+                    ▼
+              Ledger Service
+                    │
+                    ▼
+                 ledger-db
 ```
 
-Objetivo:
-
-Identificar onde uma transferência demorou ou falhou.
+The goal is to identify where a distributed operation was delayed or failed.
 
 ---
 
-# 17. Load Testing
+# 18. Load Testing
 
-Utilizar k6 para simular cenários reais.
+Use k6 to simulate realistic workloads.
 
-### Cenário 1
+### Scenario 1
 
 ```text
-1.000 usuários
+1,000 users
 100 RPS
 ```
 
-### Cenário 2
+### Scenario 2
 
 ```text
-10.000 usuários
-1.000 RPS
+10,000 users
+1,000 RPS
 ```
 
-### Cenário 3
+### Scenario 3
 
 ```text
-100.000 usuários
-5.000+ RPS
+100,000 users
+5,000+ RPS
 ```
 
-Medir:
+Measure:
 
 - Throughput
-- Latência
+- Latency
 - Error Rate
 - CPU
 - Memory
@@ -791,41 +939,41 @@ Medir:
 
 ---
 
-# 18. AWS + Terraform
+# 19. AWS + Terraform
 
-Depois que a arquitetura estiver funcionando localmente, migrar os componentes para AWS.
+After the architecture is working locally, migrate the infrastructure to AWS.
 
-Possível arquitetura:
+Possible architecture:
 
 ```text
-                    Internet
-                       │
-                       ▼
-                  API Gateway
-                       │
-                       ▼
-                     ALB
-                       │
-                       ▼
-                  EKS Cluster
-                       │
-            ┌──────────┼──────────┐
-            ▼          ▼          ▼
-         Wallet      Payment     User
-         Service     Service    Service
-            │          │          │
-            └──────────┼──────────┘
-                       │
-              ┌────────┴────────┐
-              ▼                 ▼
-           RDS PostgreSQL      Redis
-                               ElastiCache
-              │
-              ▼
-          Kafka / MSK
+                         Internet
+                            │
+                            ▼
+                       API Gateway
+                            │
+                            ▼
+                           ALB
+                            │
+                            ▼
+                        EKS Cluster
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+     User Service      Wallet Service    Payment Service
+          │                 │                 │
+      user-db           wallet-db        payment-db
+                            │
+                            ▼
+                         Kafka / MSK
+                            │
+                 ┌──────────┴──────────┐
+                 ▼                     ▼
+          Transfer Service       Ledger Service
+                 │                     │
+            transfer-db            ledger-db
 ```
 
-Infraestrutura gerenciada utilizando:
+Infrastructure will be managed using:
 
 ```text
 Terraform
@@ -833,47 +981,46 @@ Terraform
 
 ---
 
-# Cenário principal
+# Main Challenge
 
-O principal desafio do projeto será simular uma situação de alta concorrência.
+The main challenge is to simulate a high-concurrency financial operation.
+
+Example:
 
 ```text
 Wallet A
-Saldo: R$ 1.000
+Balance: R$ 1,000
 ```
 
-Recebe:
+Receives:
 
 ```text
-100 requisições simultâneas
+100 simultaneous requests
 ```
 
-Tentando:
+attempting to:
 
 ```text
-Transferir R$100
+Transfer R$100
 ```
 
-O sistema deve garantir:
+The system must guarantee:
 
 ```text
-Saldo nunca < R$0
+Balance never becomes negative
+
+A transfer cannot be processed twice
+
+Money cannot be created
+
+Money cannot disappear
+
+Events cannot be silently lost
+
+The ledger cannot become inconsistent
 ```
 
-e:
-
-```text
-Transferência não pode ser processada duas vezes
-```
-
-Além disso:
-
-```text
-Dinheiro não pode ser criado
-Dinheiro não pode desaparecer
-Eventos não podem ser perdidos
-Ledger não pode ficar inconsistente
-```
+This scenario will be used to study concurrency, locking, idempotency, consistency, messaging, and resilience.
 
 ---
 
@@ -882,46 +1029,49 @@ Ledger não pode ficar inconsistente
 ```text
 [ ] 01. Monolith - Java / Spring Boot
 [ ] 02. Ledger
-[ ] 03. Idempotência
-[ ] 04. Concorrência
+[ ] 03. Idempotency
+[ ] 04. Concurrency
 [ ] 05. Unit / Integration / E2E Tests
 [ ] 06. Redis
-[ ] 07. Kafka
-[ ] 08. Outbox Pattern
-[ ] 09. Serverless - Go / AWS Lambda
-[ ] 10. Resiliência
-[ ] 11. Dead Letter Queue
-[ ] 12. API Gateway
-[ ] 13. Load Balancer
-[ ] 14. Kubernetes
-[ ] 15. Auto Scaling
-[ ] 16. Prometheus + Grafana
-[ ] 17. OpenTelemetry
-[ ] 18. Load Testing
-[ ] 19. AWS
-[ ] 20. Terraform
+[ ] 07. Microservices
+[ ] 08. Kafka
+[ ] 09. Outbox Pattern
+[ ] 10. Serverless - Go / AWS Lambda
+[ ] 11. Resilience
+[ ] 12. Dead Letter Queue
+[ ] 13. API Gateway
+[ ] 14. Load Balancer
+[ ] 15. Kubernetes
+[ ] 16. Auto Scaling
+[ ] 17. Prometheus + Grafana
+[ ] 18. OpenTelemetry
+[ ] 19. Load Testing
+[ ] 20. AWS
+[ ] 21. Terraform
 ```
 
 ---
 
-# Princípio do projeto
+# Project Principle
 
-O projeto não deve começar com uma arquitetura complexa.
+The project should not start with a complex architecture.
 
-A evolução deve seguir:
+Each architectural evolution should be driven by a concrete problem:
 
 ```text
-Problema
+Problem
    ↓
-Medição
+Measurement
    ↓
-Gargalo / Falha
+Bottleneck / Failure
    ↓
-Nova solução
+New Solution
    ↓
-Teste
+Test
    ↓
-Medição
+Measurement
    ↓
 Trade-offs
 ```
+
+The goal is not simply to build a distributed system, but to understand **why each architectural decision exists, which problem it solves, and what trade-offs it introduces**.
