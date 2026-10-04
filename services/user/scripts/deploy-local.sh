@@ -56,7 +56,9 @@ kind load docker-image "$IMAGE" --name "$CLUSTER"
 success "Image loaded into Kind"
 
 info "Installing ingress-nginx controller..."
-kubectl apply -f "$INGRESS_CONTROLLER_MANIFEST"
+if ! kubectl get namespace ingress-nginx >/dev/null 2>&1; then
+  kubectl apply -f "$INGRESS_CONTROLLER_MANIFEST"
+fi
 kubectl rollout status \
   deployment/ingress-nginx-controller \
   -n ingress-nginx
@@ -64,7 +66,7 @@ kubectl rollout status \
 success "Ingress controller is ready"
 
 info "Applying Kubernetes manifests..."
-kubectl apply -f "$USER_DIR/../../infrastructure/kubernetes/base/user-service"
+kubectl apply -R -f "$USER_DIR/../../infrastructure/kubernetes/base"
 
 success "Kubernetes manifests applied"
 
