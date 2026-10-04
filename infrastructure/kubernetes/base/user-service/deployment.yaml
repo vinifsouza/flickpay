@@ -24,6 +24,11 @@ spec:
             - containerPort: 8080
 
           env:
+            - name: APP_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
             - name: SPRING_DATASOURCE_URL
               valueFrom:
                 configMapKeyRef:
