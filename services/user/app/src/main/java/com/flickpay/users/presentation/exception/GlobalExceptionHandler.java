@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.flickpay.users.domain.exception.EmailAlreadyExistsException;
 import com.flickpay.users.domain.exception.UserAlreadyInactiveException;
 import com.flickpay.users.domain.exception.UserNotFoundException;
+import com.flickpay.users.presentation.dto.ApiResponse;
 import com.flickpay.users.presentation.dto.ErrorResponse;
 import com.flickpay.users.presentation.enums.ErrorCode;
 
@@ -18,7 +19,7 @@ public class GlobalExceptionHandler {
     final String BASE_PATH = "/users";
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+    public ResponseEntity<ApiResponse<ErrorResponse>> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
         ErrorResponse response = new ErrorResponse(
             ErrorCode.EMAIL_ALREADY_EXISTS.getCode(),
             ex.getMessage(),
@@ -28,11 +29,11 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
-            .body(response);
+            .body(new ApiResponse<>(response));
     }
 
     @ExceptionHandler (UserAlreadyInactiveException.class)
-    public ResponseEntity<ErrorResponse> handleUserAlreadyInactiveException(UserAlreadyInactiveException ex) {
+    public ResponseEntity<ApiResponse<ErrorResponse>> handleUserAlreadyInactiveException(UserAlreadyInactiveException ex) {
         ErrorResponse response = new ErrorResponse(
             ErrorCode.USER_ALREADY_INACTIVE.getCode(),
             ex.getMessage(),
@@ -41,11 +42,11 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
-            .body(response);
+            .body(new ApiResponse<>(response));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
+    public ResponseEntity<ApiResponse<ErrorResponse>> handleUserNotFoundException(UserNotFoundException ex) {
         ErrorResponse response = new ErrorResponse(
             ErrorCode.USER_NOT_FOUND.getCode(),
             ex.getMessage(),
@@ -54,6 +55,6 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
-            .body(response);
+            .body(new ApiResponse<>(response));
     }
 }
