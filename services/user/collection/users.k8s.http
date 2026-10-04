@@ -1,0 +1,23 @@
+@PORT = 3000
+@userId = 8a7192f2-91c4-4ad9-b627-cc535c0342dd
+@userEmail = smoke@example.com
+
+### Health check liveness
+GET http://localhost:{{PORT}}/actuator/health/liveness HTTP/1.1
+content-type: application/json
+
+### Health check
+GET http://localhost:{{PORT}}/actuator/health HTTP/1.1
+content-type: application/json
+
+### GET all users
+GET http://localhost:{{PORT}}/users HTTP/1.1
+content-type: application/json
+
+### GET user by id {{userId}}
+GET http://localhost:{{PORT}}/users/{{userId}} HTTP/1.1
+content-type: application/json
+
+### GET user by email {{userEmail}}
+GET http://localhost:{{PORT}}/users/search?email={{userEmail}} HTTP/1.1
+content-type: application/json

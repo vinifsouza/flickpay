@@ -20,10 +20,51 @@ spec:
           image: flickpay/user-service:local
           imagePullPolicy: Never
 
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+
           ports:
             - containerPort: 8080
 
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 30
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 30
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:MaxRAMPercentage=75"
+
+            - name: APP_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
             - name: SPRING_DATASOURCE_URL
               valueFrom:
                 configMapKeyRef:

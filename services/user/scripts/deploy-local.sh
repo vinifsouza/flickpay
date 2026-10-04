@@ -39,6 +39,7 @@ USER_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 IMAGE="flickpay/user-service:local"
 CLUSTER="flickpay"
 SERVICE="user-service"
+INGRESS_CONTROLLER_MANIFEST="https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.1/deploy/static/provider/baremetal/deploy.yaml"
 
 title "FlickPay - User Service"
 
@@ -54,10 +55,23 @@ kind load docker-image "$IMAGE" --name "$CLUSTER"
 
 success "Image loaded into Kind"
 
-info "Restarting $SERVICE pods..."
-kubectl delete pods \
-  -l app="$SERVICE" \
-  --ignore-not-found
+info "Installing ingress-nginx controller..."
+if ! kubectl get namespace ingress-nginx >/dev/null 2>&1; then
+  kubectl apply -f "$INGRESS_CONTROLLER_MANIFEST"
+fi
+kubectl rollout status \
+  deployment/ingress-nginx-controller \
+  -n ingress-nginx
+
+success "Ingress controller is ready"
+
+info "Applying Kubernetes manifests..."
+kubectl apply -R -f "$USER_DIR/../../infrastructure/kubernetes/base"
+
+success "Kubernetes manifests applied"
+
+info "Restarting $SERVICE deployment..."
+kubectl rollout restart deployment/"$SERVICE"
 
 success "Pods restarted"
 
@@ -70,9 +84,12 @@ success "Deployment is ready"
 info "Current pods:"
 kubectl get pods -l app="$SERVICE"
 
-info "Starting port-forwards..."
+info "Starting port-forward through Ingress..."
 
-kubectl port-forward svc/user-service 3000:8080 &
+kubectl port-forward \
+  -n ingress-nginx \
+  service/ingress-nginx-controller \
+  3000:80 &
 API_PID=$!
 
 kubectl port-forward svc/user-db 5433:5432 &
