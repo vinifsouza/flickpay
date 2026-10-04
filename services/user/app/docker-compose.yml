@@ -1,0 +1,21 @@
+## For local development, we will use docker-compose to run the Postgres database for the user service.
+
+services:
+  user-db:
+    image: postgres:17
+    container_name: flickpay-user-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: flickpay_users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+
+volumes:
+  user-db-data:

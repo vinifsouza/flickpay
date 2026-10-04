@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-db-config
+data:
+  POSTGRES_DB: flickpay_users
+  POSTGRES_PORT: "5432"
