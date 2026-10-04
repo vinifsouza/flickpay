@@ -17,7 +17,7 @@ public class PodIdentityResponseFilter extends OncePerRequestFilter {
 
     private final String podName;
 
-    public PodIdentityResponseFilter(@Value("${app.pod-name:local}") String podName) {
+    public PodIdentityResponseFilter(@Value("${APP_POD_NAME:local}") String podName) {
         this.podName = podName;
     }
 

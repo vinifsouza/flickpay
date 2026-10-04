@@ -2,9 +2,6 @@ spring:
   application:
     name: users
 
-app:
-  pod-name: ${APP_POD_NAME:local}
-
   jpa:
     hibernate:
       ddl-auto: validate
