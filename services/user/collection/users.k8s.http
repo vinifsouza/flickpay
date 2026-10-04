@@ -2,6 +2,10 @@
 @userId = 8a7192f2-91c4-4ad9-b627-cc535c0342dd
 @userEmail = smoke@example.com
 
+### Health check
+GET http://localhost:{{PORT}}/actuator/health HTTP/1.1
+content-type: application/json
+
 ### GET all users
 GET http://localhost:{{PORT}}/users HTTP/1.1
 content-type: application/json
