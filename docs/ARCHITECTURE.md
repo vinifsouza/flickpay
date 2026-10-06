@@ -30,7 +30,7 @@ FlickPay is divided into **domain-oriented microservices**, where each service h
                            API Gateway
                                 │
                                 ▼
-                         Load Balancer
+                         Load Balancer (per service)
                                 │
               ┌─────────────────┼─────────────────┐
               ▼                 ▼                 ▼
