@@ -2,11 +2,11 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Spring Boot-WalletsApplication<wallets>",
+            "name": "Spring Boot-UsersApplication<users>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "mainClass": "com.flickpay.wallets.WalletsApplication",
-            "projectName": "wallets",
+            "mainClass": "com.flickpay.users.UsersApplication",
+            "projectName": "users",
             "args": "",
             "envFile": "${workspaceFolder}/.env",
             "vmArgs": "-Dspring.profiles.active=local"
