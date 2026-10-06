@@ -18,10 +18,18 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Wallet")
+@Table(
+    name = "Wallet",
+    indexes = {
+        @Index(name = "idx_wallet_user_id", columnList = "user_id"),
+        @Index(name = "idx_wallet_currency", columnList = "currency"),
+        @Index(name = "idx_wallet_status", columnList = "status")
+    }
+)
 @EntityListeners(AuditingEntityListener.class)
 public class WalletJpaEntity {
     @Id
