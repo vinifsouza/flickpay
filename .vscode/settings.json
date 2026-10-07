@@ -1,7 +1,12 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "interactive",
     "github.copilot.enable": {
-        "*": false
+        "*": true,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false,
+        "java": true
     },
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 1000,

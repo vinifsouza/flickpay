@@ -1,6 +1,7 @@
 package com.flickpay.wallets.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.flickpay.wallets.domain.entity.Wallet;
@@ -9,7 +10,7 @@ import com.flickpay.wallets.domain.enums.WalletStatus;
 public interface WalletRepository {
     Wallet save(Wallet wallet);
 
-    Wallet findById(UUID walletId);
+    Optional<Wallet> findById(UUID walletId);
 
     List<Wallet> findByUserId(UUID userId);
 

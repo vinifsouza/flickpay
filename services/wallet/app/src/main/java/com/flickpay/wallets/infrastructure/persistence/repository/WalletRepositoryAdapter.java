@@ -1,6 +1,7 @@
 package com.flickpay.wallets.infrastructure.persistence.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,30 +29,29 @@ public class WalletRepositoryAdapter implements WalletRepository {
     public List<Wallet> findByUserId(UUID userId) {
         List<WalletJpaEntity> walletEntities = walletJpaRepository.findByUserId(userId);
         return walletEntities.stream()
-                .map(WalletPersistenceMapper::toDomainEntity)
-                .collect(Collectors.toList());
+            .map(WalletPersistenceMapper::toDomainEntity)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Wallet> findByStatus(WalletStatus status) {
         List<WalletJpaEntity> walletEntities = walletJpaRepository.findByStatus(status);
         return walletEntities.stream()
-                .map(WalletPersistenceMapper::toDomainEntity)
-                .collect(Collectors.toList());
+            .map(WalletPersistenceMapper::toDomainEntity)
+            .collect(Collectors.toList());
     }
 
     @Override
-    public Wallet findById(UUID walletId) {
+    public Optional<Wallet> findById(UUID walletId) {
         return walletJpaRepository.findById(walletId)
-                .map(WalletPersistenceMapper::toDomainEntity)
-                .orElse(null);
+            .map(WalletPersistenceMapper::toDomainEntity);
     }
 
     @Override
     public List<Wallet> findAll() {
         List<WalletJpaEntity> walletEntities = walletJpaRepository.findAll();
         return walletEntities.stream()
-                .map(WalletPersistenceMapper::toDomainEntity)
-                .collect(Collectors.toList());
+            .map(WalletPersistenceMapper::toDomainEntity)
+            .collect(Collectors.toList());
     }
 }

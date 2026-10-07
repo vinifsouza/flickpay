@@ -2,6 +2,7 @@ package com.flickpay.wallets.infrastructure.persistence.entity;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Currency;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,8 +40,8 @@ public class WalletJpaEntity {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(columnDefinition = "CHAR(3)", name = "currency", nullable = false)
-    private String currency;
+    @Column(name = "currency", nullable = false, length = 3)
+    private Currency currency;
 
     @Column(name = "balance", nullable = false, precision = 19, scale = 4)
     private BigDecimal balance;
@@ -60,7 +61,7 @@ public class WalletJpaEntity {
     public WalletJpaEntity(
         UUID id,
         UUID userId,
-        String currency,
+        Currency currency,
         BigDecimal balance,
         WalletStatus status,
         OffsetDateTime createdAt,
@@ -87,11 +88,11 @@ public class WalletJpaEntity {
         this.userId = userId;
     }
 
-    public String getCurrency() {
+    public Currency getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    public void setCurrency(Currency currency) {
         this.currency = currency;
     }
 

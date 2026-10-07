@@ -20,7 +20,7 @@ public class WalletPersistenceMapper {
     }
 
     public static Wallet toDomainEntity(WalletJpaEntity walletJpaEntity) {
-        return new Wallet(
+        return Wallet.rehydrate(
                 walletJpaEntity.getId(),
                 walletJpaEntity.getUserId(),
                 walletJpaEntity.getCurrency(),
