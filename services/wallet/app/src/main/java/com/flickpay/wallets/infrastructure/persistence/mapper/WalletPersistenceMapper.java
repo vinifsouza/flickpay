@@ -3,7 +3,7 @@ package com.flickpay.wallets.infrastructure.persistence.mapper;
 import com.flickpay.wallets.domain.entity.Wallet;
 import com.flickpay.wallets.infrastructure.persistence.entity.WalletJpaEntity;
 
-public class WalletPersistenceMapper {
+public final class WalletPersistenceMapper {
     private WalletPersistenceMapper() {
     }
 

@@ -4,7 +4,7 @@
             "type": "java",
             "name": "Spring Boot-WalletsApplication<wallets>",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/app",
             "mainClass": "com.flickpay.wallets.WalletsApplication",
             "projectName": "wallets",
             "args": "",

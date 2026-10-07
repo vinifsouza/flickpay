@@ -9,17 +9,18 @@ import java.util.UUID;
 
 import com.flickpay.wallets.domain.enums.WalletStatus;
 import com.flickpay.wallets.domain.exception.IllegalWalletStatusChangeException;
+import com.flickpay.wallets.domain.exception.InvalidCurrencyCode;
 
 public class Wallet {
     private final UUID id;
     private UUID userId;
-    private Currency currency;
+    private String currency;
     private BigDecimal balance;
     private WalletStatus status;
     private final OffsetDateTime createdAt;
     private final OffsetDateTime updatedAt;
 
-    public Wallet(UUID userId, Currency currency, BigDecimal balance, WalletStatus status) {
+    public Wallet(UUID userId, String currency, BigDecimal balance, WalletStatus status) {
         this.id = null;
         this.createdAt = null;
         this.updatedAt = null;
@@ -32,7 +33,7 @@ public class Wallet {
     private Wallet(
         UUID id,
         UUID userId,
-        Currency currency,
+        String currency,
         BigDecimal balance,
         WalletStatus status,
         OffsetDateTime createdAt,
@@ -50,7 +51,7 @@ public class Wallet {
     public static Wallet rehydrate(
         UUID id,
         UUID userId,
-        Currency currency,
+        String currency,
         BigDecimal balance,
         WalletStatus status,
         OffsetDateTime createdAt,
@@ -79,12 +80,16 @@ public class Wallet {
         this.userId = userId;
     }
 
-    public Currency getCurrency() {
+    public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
+    public void setCurrency(String currency) {
+        try {
+            this.currency = Currency.getInstance(currency).getCurrencyCode();
+        } catch (IllegalArgumentException e) {
+            throw new InvalidCurrencyCode(currency);
+        }
     }
 
     public BigDecimal getBalance() {

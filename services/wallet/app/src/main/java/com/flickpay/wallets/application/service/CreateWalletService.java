@@ -2,11 +2,14 @@ package com.flickpay.wallets.application.service;
 
 import java.math.BigDecimal;
 
+import org.springframework.stereotype.Service;
+
 import com.flickpay.wallets.application.dto.CreateWalletCommand;
 import com.flickpay.wallets.domain.entity.Wallet;
 import com.flickpay.wallets.domain.enums.WalletStatus;
 import com.flickpay.wallets.domain.repository.WalletRepository;
 
+@Service
 public class CreateWalletService {
     private final WalletRepository walletRepository;
 
@@ -14,7 +17,7 @@ public class CreateWalletService {
         this.walletRepository = walletRepository;
     }
 
-    public Wallet createWallet(CreateWalletCommand command) {
+    public Wallet create(CreateWalletCommand command) {
         Wallet newWallet = new Wallet(
                 command.userId(),
                 command.currency(),

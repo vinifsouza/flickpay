@@ -5,12 +5,15 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Repository;
+
 import com.flickpay.wallets.domain.entity.Wallet;
 import com.flickpay.wallets.domain.enums.WalletStatus;
 import com.flickpay.wallets.domain.repository.WalletRepository;
 import com.flickpay.wallets.infrastructure.persistence.entity.WalletJpaEntity;
 import com.flickpay.wallets.infrastructure.persistence.mapper.WalletPersistenceMapper;
 
+@Repository
 public class WalletRepositoryAdapter implements WalletRepository {
     private final WalletJpaRepository walletJpaRepository;
 

@@ -3,11 +3,14 @@ package com.flickpay.wallets.application.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import com.flickpay.wallets.domain.entity.Wallet;
 import com.flickpay.wallets.domain.enums.WalletStatus;
 import com.flickpay.wallets.domain.exception.WalletNotFoundException;
 import com.flickpay.wallets.domain.repository.WalletRepository;
 
+@Service
 public class GetWalletService {
     private final WalletRepository walletRepository;
 
