@@ -6,6 +6,8 @@ The project simulates a payment platform where users can have wallets, add funds
 
 > **Educational project only. No real money will be processed.**
 
+Spring template: https://start.spring.io/#!type=maven-project&language=java&platformVersion=4.1.1&packaging=jar&configurationFileFormat=yaml&jvmVersion=25&groupId=com.flickpay&artifactId=wallets&packageName=com.flickpay.wallets&dependencies=springdoc-openapi,postgresql,h2,flyway,devtools,web,validation,data-jpa
+
 ---
 
 # Goals
