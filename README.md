@@ -115,8 +115,6 @@ Wallet B → R$ 750
 
 # Architecture
 
-The project will evolve gradually from a monolith into a distributed microservices architecture.
-
 The final architecture will be based on **domain ownership**, with each service owning its own database.
 
 ```text
@@ -223,15 +221,13 @@ The **Ledger Service maintains an immutable financial history**.
 
 Java will be the primary language for the core services.
 
-The initial monolith will contain:
-
 - Users
 - Wallets
 - Transfers
 - Payments
 - Ledger
 
-The domain will later be split into the microservices described above.
+The domain will  be split into the microservices described above.
 
 Main stack:
 
@@ -287,9 +283,9 @@ The goal is to compare traditional containerized workloads with event-driven and
 
 # Roadmap
 
-## 01. Monolith
+## 01. ~Monolith~
 
-Start with a simple application.
+Start with ~a simple application~ microservices.
 
 ```text
 Client
@@ -476,8 +472,6 @@ PostgreSQL remains the source of truth for financial data.
 ---
 
 # 06. Microservices
-
-Split the monolith into domain-oriented services:
 
 ```text
 User Service
@@ -1027,7 +1021,7 @@ This scenario will be used to study concurrency, locking, idempotency, consisten
 # Roadmap
 
 ```text
-[ ] 01. Monolith - Java / Spring Boot
+[X] ~01. Monolith - Java / Spring Boot~
 [ ] 02. Ledger
 [ ] 03. Idempotency
 [ ] 04. Concurrency
