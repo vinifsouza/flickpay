@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.flickpay.shared.presentation.dto.ApiResponse;
 import com.flickpay.users.application.dto.CreateUserCommand;
 import com.flickpay.users.application.service.CreateUserService;
 import com.flickpay.users.application.service.GetUserService;
-import com.flickpay.users.presentation.dto.ApiResponse;
 import com.flickpay.users.presentation.dto.CreateUserRequest;
 import com.flickpay.users.presentation.dto.UserResponse;
 import com.flickpay.users.presentation.mapper.UserResponseMapper;

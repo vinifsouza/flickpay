@@ -1,4 +1,4 @@
-package com.flickpay.users.presentation.dto;
+package com.flickpay.shared.presentation.dto;
 
 import java.time.OffsetDateTime;
 

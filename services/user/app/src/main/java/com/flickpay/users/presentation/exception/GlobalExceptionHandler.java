@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.flickpay.users.domain.exception.EmailAlreadyExistsException;
 import com.flickpay.users.domain.exception.UserAlreadyInactiveException;
 import com.flickpay.users.domain.exception.UserNotFoundException;
-import com.flickpay.users.presentation.dto.ApiResponse;
-import com.flickpay.users.presentation.dto.ErrorResponse;
+import com.flickpay.shared.presentation.dto.ApiResponse;
+import com.flickpay.shared.presentation.dto.ErrorResponse;
 import com.flickpay.users.presentation.enums.ErrorCode;
 
 @RestControllerAdvice
