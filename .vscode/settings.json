@@ -3,10 +3,10 @@
     "java.configuration.updateBuildConfiguration": "interactive",
     "github.copilot.enable": {
         "*": true,
-        "plaintext": false,
-        "markdown": false,
+        "plaintext": true,
+        "markdown": true,
         "scminput": false,
-        "java": true
+        "java": false
     },
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 1000,
